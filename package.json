@@ -1,0 +1,13 @@
+{
+  "main": "app.js",
+  "dependencies": {
+    "coffee-script": "^1.10.0",
+    "del": "^2.2.0",
+    "express": "^4.13.4",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.2.0",
+    "jade": "^1.11.0"
+  },
+  "devDependencies": {},
+  "author": "github.com/nikersify"
+}

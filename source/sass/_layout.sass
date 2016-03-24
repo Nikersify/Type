@@ -1,0 +1,24 @@
+html, body
+	width: 100%
+	min-height: 100%
+	font-family: 'Lato', sans-serif
+	background-color: hsla(0, 0%, 95%, 1)
+
+.fa
+	font-family: 'FontAwesome' !important
+
+.wrapper
+	max-width: $width
+	margin: 0 auto
+
+.progress-wrap
+	display: block
+	width: 100%
+	background-color: hsla(0, 0%, 50%, 0.2)
+	border-radius: 10px
+
+	.progress
+		width: 0%
+		height: 3px
+		background-color: hsla(0, 0%, 50%, 0.6)
+		transition: all 0.2s cubic-bezier(0.41, 0.01, 0.58, 1)
