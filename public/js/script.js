@@ -23,7 +23,7 @@ $(document).ready(function() {
 			stats_accuracy: '00.00',
 			stats_wpm: '-',
 			stats_progress: '0%',
-
+			//text: 'kappa123',
 			text: 'Lorem ąęóź dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
 			typed: '',
 			typedCorrect: [],
@@ -94,7 +94,16 @@ $(document).ready(function() {
 			},
 
 			textTransform: function() {
-				var prop = 'translateY(calc((-3.375em - 3px) *' + this.current_line +'))'
+				var transformTo;
+
+				if(this.current_line >= this.lines.length - this.editor_height)
+					transformTo = this.lines.length - this.editor_height
+				else 
+					transformTo = this.current_line
+
+				console.log(transformTo)
+
+				var prop = 'translateY(calc((-3.375em - 3px) *' + transformTo +'))'
 
 				return { transform: prop }
 			},
@@ -162,6 +171,22 @@ $(document).ready(function() {
 				this.paused = false
 			},
 
+			reset: function() {
+				this.stop()
+
+				this.mistakes = []
+				this.paused = false
+				this.pausedOn = NaN
+				this.stats_time = '00:00'
+				this.stats_accuracy = '00.00'
+				this.stats_wpm = '-'
+				this.stats_progress = '0%'
+
+				this.typed = ''
+				this.typedCorrect = []
+				this.mistakes = []
+			},
+
 			stop: function() {
 				this.timeTickStop()
 
@@ -169,7 +194,9 @@ $(document).ready(function() {
 			},
 
 			timeTick: function() {
+				
 				// time
+
 				var time
 				var start = new Date(this.unixStart)
 				
@@ -198,10 +225,15 @@ $(document).ready(function() {
 
 				var net_wpm = ((this.typed.length) / 5 - this.uncorrected) /  minutes
 
-				this.stats_wpm = gross_wpm
+				var odd_wpm = (this.typedCorrect.length / 5) / minutes
+
+				if(isNaN(odd_wpm)) this.stats_wpm = '-'
+				else this.stats_wpm = odd_wpm.toFixed(0)
 			},
 
 			timeTickStart: function() {
+				var that = this
+
 				this.timeTickInterval = setInterval(function() {
 					that.timeTick()
 				}, 1000)
@@ -243,16 +275,18 @@ $(document).ready(function() {
 
 	$(window).on('blur', function(e) {
 
-		app.blurred = true
-
-		if(!app.paused) app.pause()
+		if(app.typed.length != 0) {
+			app.blurred = true
+			if(!app.paused) app.pause()
+		}
 	})
 
 	$(window).on('focus', function(e) {
-
-		app.blurred = false
-
-		if(app.paused) app.resume()
+		
+		if(app.typed.length != 0) {
+			app.blurred = false
+			if(app.paused) app.resume()
+		}
 	})
 
 	$(document).on('keydown', function(e) {
@@ -275,8 +309,13 @@ $(document).ready(function() {
 		if(c == 8) {
 			e.preventDefault()
 
-			if(!app.done)
+			if(!app.done) {
 				app.typed = app.typed.substring(0, app.typed.length - 1)
+
+				if(app.typed.length == 0) {
+					app.reset()
+				}
+			}
 		}
 	})
 	
@@ -285,10 +324,10 @@ $(document).ready(function() {
 		
 		if(!e.ctrlKey || e.altKey) {
 
-			if(!app.done) {
+			if(app.typed.length == 0)
+				app.start()
 
-				if(app.typed.length == 0)
-					app.start()
+			if(!app.done) {
 
 				if(String.fromCharCode(c) != app.text[app.typed.length])
 					app.pushMistake(app.typed.length)

@@ -30,7 +30,7 @@ html
 					i.fa.fa-crosshairs
 			.editor() 
 				//- :style='{display: (done)? "none" : ""}'
-				.overlay(:style='{display: (blurred)? "flex" : "none"}')
+				.overlay(:style='{display: (!blurred || done)? "none" : "flex"}')
 					
 					.message re-focus to resume typing...
 				
