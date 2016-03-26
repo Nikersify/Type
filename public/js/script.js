@@ -101,8 +101,6 @@ $(document).ready(function() {
 				else 
 					transformTo = this.current_line
 
-				console.log(transformTo)
-
 				var prop = 'translateY(calc((-3.375em - 3px) *' + transformTo +'))'
 
 				return { transform: prop }
@@ -149,8 +147,6 @@ $(document).ready(function() {
 				this.typedCorrect = []
 
 				this.unixStart = new Date().getTime()
-
-				that = this
 				
 				this.timeTickStart()
 			},
@@ -232,10 +228,10 @@ $(document).ready(function() {
 			},
 
 			timeTickStart: function() {
-				var that = this
+				var self = this
 
 				this.timeTickInterval = setInterval(function() {
-					that.timeTick()
+					self.timeTick()
 				}, 1000)
 			},
 
@@ -275,7 +271,7 @@ $(document).ready(function() {
 
 	$(window).on('blur', function(e) {
 
-		if(app.typed.length != 0) {
+		if(app.typed.length != 0 && !app.done) {
 			app.blurred = true
 			if(!app.paused) app.pause()
 		}
@@ -283,7 +279,7 @@ $(document).ready(function() {
 
 	$(window).on('focus', function(e) {
 		
-		if(app.typed.length != 0) {
+		if(app.typed.length != 0 && !app.done) {
 			app.blurred = false
 			if(app.paused) app.resume()
 		}
