@@ -8,28 +8,29 @@ Vue.config.devtools = DEVELOPMENT
 
 $(document).ready(function() {
 
-	app = new Vue({
-		el: '#app',
-		data: {
-			blurred: false,
-			done: false,
-			editor_height: 3,
-			editor_width: 34,
-			lines: [],
-			mistakes: [],
-			paused: false,
-			pausedOn: NaN,
-			stats_time: '00:00',
-			stats_accuracy: '00.00',
-			stats_wpm: '-',
-			stats_progress: '0%',
-			//text: 'kappa123',
-			text: 'Lorem ąęóź dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-			typed: '',
-			typedCorrect: [],
-			timeTickInterval: undefined,
-			unixStart: NaN,
-			unixPaused: NaN
+	var Editor = Vue.extend({
+		data: function() { 
+			return {
+				blurred: false,
+				done: false,
+				editor_height: 3,
+				editor_width: 34,
+				lines: [],
+				mistakes: [],
+				paused: false,
+				pausedOn: NaN,
+				stats_time: '00:00',
+				stats_accuracy: '00.00',
+				stats_wpm: '-',
+				stats_progress: '0%',
+				//text: 'kappa123',
+				text: 'Lorem ąęóź dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+				typed: '',
+				typedCorrect: [],
+				timeTickInterval: undefined,
+				unixStart: NaN,
+				unixPaused: NaN
+			}
 		},
 
 		computed: {
@@ -96,7 +97,8 @@ $(document).ready(function() {
 			textTransform: function() {
 				var transformTo;
 
-				if(this.current_line >= this.lines.length - this.editor_height)
+				if(this.current_line >= this.lines.length - this.editor_height 
+					&& this.lines.length > 3)
 					transformTo = this.lines.length - this.editor_height
 				else 
 					transformTo = this.current_line
@@ -238,102 +240,126 @@ $(document).ready(function() {
 			timeTickStop: function() {
 				clearInterval(this.timeTickInterval)
 			}
-		}
-	})
+		},
 
-	// calculate lines
+		created: function() {
 
-	var line_index = 0
+			// calculate lines
 
-	app.$set('lines[0]', '')
+			var line_index = 0
 
-	for(var i = 0; i < app.text.length; i++) {
-		if(app.text[i - 1] == ' ') {
+			this.$set('lines[0]', '')
 
-			// next word length
-			var len = 0
-			
-			for(var j = i + 1; ; j++) {
-				if(app.text[j] == ' ' || j > app.text.length) break
-				len++
-			}
+			for(var i = 0; i < this.text.length; i++) {
+				if(this.text[i - 1] == ' ') {
 
-			if(app.lines[line_index].length + len + 1 >= app.editor_width) {
-				line_index++
-				app.$set('lines['+line_index+']', '')
-			}
-		}
+					// next word length
+					var len = 0
+					
+					for(var j = i + 1; ; j++) {
+						if(this.text[j] == ' ' || j > this.text.length) break
+						len++
+					}
 
-		app.lines[line_index] += app.text[i]
-	}
-
-	// window/document events
-
-	$(window).on('blur', function(e) {
-
-		if(app.typed.length != 0 && !app.done) {
-			app.blurred = true
-			if(!app.paused) app.pause()
-		}
-	})
-
-	$(window).on('focus', function(e) {
-		
-		if(app.typed.length != 0 && !app.done) {
-			app.blurred = false
-			if(app.paused) app.resume()
-		}
-	})
-
-	$(document).on('keydown', function(e) {
-		e = e || window.event
-
-		var c = e.which || e.keyCode
-
-		if(e.ctrlKey && !e.altKey) {
-			
-			// ctrl + [key] shortcuts
-			switch(c) {
-				case 65: // a
-				case 83: // s
-					e.preventDefault()
-					console.log('shortcut ' + String.fromCharCode(c))
-				break
-			}
-		}
-
-		if(c == 8) {
-			e.preventDefault()
-
-			if(!app.done) {
-				app.typed = app.typed.substring(0, app.typed.length - 1)
-
-				if(app.typed.length == 0) {
-					app.reset()
+					if(this.lines[line_index].length + len + 1 >= this.editor_width) {
+						line_index++
+						this.$set('lines['+line_index+']', '')
+					}
 				}
+
+				this.lines[line_index] += this.text[i]
 			}
+
+			// window/document events
+
+			var self = this
+
+			$(window).on('blur.editor' /* editor - namespace */, function(e) {
+
+				if(self.typed.length != 0 && !self.done) {
+					self.blurred = true
+					if(!self.paused) self.pause()
+				}
+			})
+
+			$(window).on('focus.editor', function(e) {
+				
+				if(self.typed.length != 0 && !self.done) {
+					self.blurred = false
+					if(self.paused) self.resume()
+				}
+			})
+
+			$(document).on('keydown.editor', function(e) {
+				e = e || window.event
+
+				var c = e.which || e.keyCode
+
+				if(e.ctrlKey && !e.altKey) {
+					
+					// ctrl + [key] shortcuts
+					switch(c) {
+						case 65: // a
+						case 83: // s
+							e.preventDefault()
+							console.log('shortcut ' + String.fromCharCode(c))
+						break
+					}
+				}
+
+				if(c == 8) {
+					e.preventDefault()
+
+					if(!self.done) {
+						self.typed = self.typed.substring(0, self.typed.length - 1)
+
+						if(self.typed.length == 0) {
+							self.reset()
+						}
+					}
+				}
+			})
+			
+			$(document).on('keypress.editor', function(e) {
+				var c = e.which || e.keyCode
+				console.log(c)
+				
+				if(!e.ctrlKey || e.altKey) {
+
+					if(self.typed.length == 0)
+						self.start()
+
+					if(!self.done) {
+
+						if(String.fromCharCode(c) != self.text[self.typed.length])
+							self.pushMistake(self.typed.length)
+						else self.pushTypedCorrect(self.typed.length)
+
+						self.typed += String.fromCharCode(c)
+						
+						if(self.typed.length == self.text.length)
+							self.stop()
+					}
+				}
+			})
+
+		},
+
+		beforeDestroy: function() {
+			
+			// unbind events
+			$(window).off('blur.editor')
+			$(window).off('focus.editor')
+			$(document).off('keydown.editor')
+			$(document).off('keypress.editor')
+
 		}
 	})
-	
-	$(document).on('keypress', function(e) {
-		var c = e.which || e.keyCode
-		
-		if(!e.ctrlKey || e.altKey) {
 
-			if(app.typed.length == 0)
-				app.start()
-
-			if(!app.done) {
-
-				if(String.fromCharCode(c) != app.text[app.typed.length])
-					app.pushMistake(app.typed.length)
-				else app.pushTypedCorrect(app.typed.length)
-
-				app.typed += String.fromCharCode(c)
-				
-				if(app.typed.length == app.text.length)
-					app.stop()
-			}
+	app = new Editor({
+		el: '#app',
+		data: {
+			// overrides go here
 		}
 	})
 })
