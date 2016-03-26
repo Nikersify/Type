@@ -86,4 +86,18 @@ $char_margin_bottom: 0.7em
 			+vignette(0.15, 30px, 10px)
 			+noselect
 
-	// <div style="display:flex;justify-content:center;align-items:center;width:100%;font-size:2em;">Text Content</div>
+.progress-wrap
+	position: absolute
+	top: 0
+	left: 0
+	display: block
+	
+	width: 100%
+	background-color: hsla(0, 0%, 50%, 0.2)
+	border-radius: 10px
+
+	.progress
+		width: 0%
+		height: 3px
+		background-color: hsla(0, 0%, 50%, 0.6)
+		transition: all 0.2s cubic-bezier(0.41, 0.01, 0.58, 1)
