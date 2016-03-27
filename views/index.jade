@@ -15,57 +15,7 @@ html
 
 	body#app
 		.wrapper
-			.progress-wrap
-				.progress(v-bind:style='{width: stats_progress}')
-		
-			.numbers
-				.time
-					i.fa.fa-clock-o
-					|  {{ stats_time }}
-				.wpm
-					.amount {{ stats_wpm }}
-					.muted wpm
-				.accuracy 
-					| {{ stats_accuracy }}<span class='muted'>%</span> 
-					i.fa.fa-crosshairs
-			.editor() 
-				//- :style='{display: (done)? "none" : ""}'
-				.overlay(:style='{display: (!blurred || done)? "none" : "flex"}')
-					
-					.message re-focus to resume typing...
-				
-				.text(:style='textTransform')
-					
-					.line(v-for='line in lines'
-					track-by='$index'
-					id='line-{{ $index }}')
-						
-						span.char(v-for='char in line'
-						track-by='$index'
-						id='char-{{ getCharId($parent.$index, $index) }}' 
-						:class='[charClasses[getCharId($parent.$index, $index)], (char == " ")? "space" : "", (getCharId($parent.$index, $index) == current_id)? "current" : ""]')
-							| {{ (char == ' ')? "&middot;" : char }}
-
-
-					//-span.char(v-for='char in text', track-by="$index", id='char-{{ $index }}')
-						| {{ (char == ' ')? "&nbsp;" : char }}
-					//-
-						.char.correct H
-						.char.correct e
-						.char.wrong l
-						.char.correct l
-						.char.current o
-						.char &nbsp;
-						.char W
-						.char o
-						.char r
-						.char l
-						.char d
-						.char !
-
-				//- input.input
-
-			//-.keyboard
+			play-arena
 
 			.footer
 				hr.line

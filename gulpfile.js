@@ -4,6 +4,8 @@ var browserify = require('browserify')
 var gulp = require('gulp')
 var transform = require('vinyl-transform')
 var through2 = require('through2')
+var vueify = require('vueify')
+
 gulp.task('sass', ['sass:clean'], function() {
 	return gulp.src('./source/sass/**/*.sass')
 		.pipe(sass().on('error', sass.logError))
@@ -19,6 +21,7 @@ gulp.task('bundle', ['bundle:clean'], function() {
 		.pipe(through2.obj(function (file, end, next) {
 			browserify(file.path, {debug: true})
 				//.transform('uglify')
+				.transform(vueify)
 				.bundle(function(err, res) {
 					file.contents = res
 					next(null, file)
@@ -34,7 +37,7 @@ gulp.task('bundle:clean', function() {
 
 gulp.task('watch', function(){
 	gulp.watch('./source/sass/**', ['sass'])
-	gulp.watch('./source/js/**', ['bundle'])
+	gulp.watch(['./source/js/**', './source/vue/**'], ['bundle'])
 })
 
 gulp.task('default', ['sass', 'bundle', 'watch'])
