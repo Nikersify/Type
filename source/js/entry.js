@@ -1,7 +1,9 @@
-var app
-var stats
+// hi
 
 DEVELOPMENT = true
+
+var Vue = require('vue')
+var $ = require('jquery')
 
 Vue.config.debug = DEVELOPMENT
 Vue.config.devtools = DEVELOPMENT

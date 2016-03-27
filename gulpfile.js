@@ -1,7 +1,9 @@
-var gulp = require('gulp'),
-	sass = require('gulp-sass'),
-	del = require('del')
-
+var	del = require('del')
+var	sass = require('gulp-sass')
+var browserify = require('browserify')
+var gulp = require('gulp')
+var transform = require('vinyl-transform')
+var through2 = require('through2')
 gulp.task('sass', ['sass:clean'], function() {
 	return gulp.src('./source/sass/**/*.sass')
 		.pipe(sass().on('error', sass.logError))
@@ -12,8 +14,27 @@ gulp.task('sass:clean', function() {
 	return del('./public/sass')
 })
 
-gulp.task('watch', function(){
-	gulp.watch('./source/sass/**', ['sass'])
+gulp.task('bundle', ['bundle:clean'], function() {
+	return gulp.src('./source/js/entry.js')
+		.pipe(through2.obj(function (file, end, next) {
+			browserify(file.path, {debug: true})
+				//.transform('uglify')
+				.bundle(function(err, res) {
+					file.contents = res
+					next(null, file)
+				})
+		}))
+		.pipe(require('gulp-rename')('bundle.js'))
+		.pipe(gulp.dest('./public/js/'))
 })
 
-gulp.task('default', ['sass', 'watch'])
+gulp.task('bundle:clean', function() {
+	return del('./public/js')
+})
+
+gulp.task('watch', function(){
+	gulp.watch('./source/sass/**', ['sass'])
+	gulp.watch('./source/js/**', ['bundle'])
+})
+
+gulp.task('default', ['sass', 'bundle', 'watch'])
