@@ -15,53 +15,56 @@ $char_margin_bottom: 0.7em
 
 		transition: 0.4s all cubic-bezier(0.45,0, 0.6, 1)
 
-		.char
-			display: inline-block
+		.line
+			white-space: nowrap
 
-			font-size: $char_font_size
-			margin-bottom: $char_margin_bottom
+			.char
+				display: inline-block
 
-			padding: 1.5px
-			margin-right: 2px
-			font-family: consolas, monospace
+				font-size: $char_font_size
+				margin-bottom: $char_margin_bottom
 
-			+noselect
+				padding: 1.5px
+				margin-right: 2px
+				font-family: consolas, monospace
 
-		.space:not(.correct):not(.wrong)
-			color: hsla(0, 0%, 0%, 0.2)
+				+noselect
 
-		.right
-			color: hsla(120, 100%, 50%, 1)
-			background-color: hsla(120, 100%, 60%, 0.2)
+			.space:not(.correct):not(.wrong)
+				color: hsla(0, 0%, 0%, 0.2)
 
-		.wrong
-			color: hsla(0, 100%, 50%, 1)
-			background-color: hsla(0, 100%, 60%, 0.2)
-		
-		.corrected
-			color: hsla(45, 100%, 50%, 1)
-			background-color: hsla(45, 100%, 60%, 0.3)
+			.right
+				color: hsla(120, 100%, 50%, 1)
+				background-color: hsla(120, 100%, 60%, 0.2)
 
-		.current:after
-			content: ' '
-			width: 0.6em
-			height: 2px
-			background-color: hsla(190, 0%, 30%, 1)
-			display: block
-			position: absolute
-			transform: translate(0px, 0.15em)
+			.wrong
+				color: hsla(0, 100%, 50%, 1)
+				background-color: hsla(0, 100%, 60%, 0.2)
+			
+			.corrected
+				color: hsla(45, 100%, 50%, 1)
+				background-color: hsla(45, 100%, 60%, 0.3)
 
-			animation: caret 0.8s infinite cubic-bezier(0.55, 0.06, 0.68, 0.19)
+			.current:after
+				content: ' '
+				width: 0.6em
+				height: 2px
+				background-color: hsla(190, 0%, 30%, 1)
+				display: block
+				position: absolute
+				transform: translate(0px, 0.15em)
+
+				animation: caret 0.8s infinite cubic-bezier(0.55, 0.06, 0.68, 0.19)
 
 
-		.current:not(.space)
-			animation: caret 0.8s infinite cubic-bezier(0.55, 0.06, 0.68, 0.19)
+			.current:not(.space)
+				animation: caret 0.8s infinite cubic-bezier(0.55, 0.06, 0.68, 0.19)
 
-		@keyframes caret
-			0%
-				opacity: 1
-			100%
-				opacity: 0.5
+			@keyframes caret
+				0%
+					opacity: 1
+				100%
+					opacity: 0.5
 
 
 	.overlay

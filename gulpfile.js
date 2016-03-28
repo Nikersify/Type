@@ -50,7 +50,10 @@ function scripts(watch) {
 			gutil.log("Bundling '" + c.cyan('bundle.js') + "'...") 
 
 			return b.bundle()
-				.on('error', function() { console.log('oh well :|') })
+				.on('error', function(e) {
+					gutil.log("An error occurred while bundling `%s`:\n%s", 
+						c.cyan('bundle.js'), c.red(e))
+				})
 
 				.pipe(source('bundle.js'))
 				.pipe(gulp.dest('./public/js'))

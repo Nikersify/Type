@@ -1,36 +1,37 @@
 <template lang="jade">
 
-.progress-wrap
-	.progress(v-bind:style='{width: stats_progress}')
+.playArena
+	.progress-wrap
+		.progress(v-bind:style='{width: stats_progress}')
 
-.numbers
-	.time
-		i.fa.fa-clock-o
-		|  {{ stats_time }}
-	.wpm
-		.amount {{ stats_wpm }}
-		.muted wpm
-	.accuracy 
-		| {{ stats_accuracy }}<span class='muted'>%</span> 
-		i.fa.fa-crosshairs
+	.numbers
+		.time
+			i.fa.fa-clock-o
+			|  {{ stats_time }}
+		.wpm
+			.amount {{ stats_wpm }}
+			.muted wpm
+		.accuracy
+			| {{ stats_accuracy }}<span class='muted'>%</span> 
+			i.fa.fa-crosshairs
 
-.editor() 
-	//- :style='{display: (done)? "none" : ""}'
-	.overlay(:style='{display: (!blurred || done)? "none" : "flex"}')
-		
-		.message re-focus to resume typing...
-	
-	.text(:style='textTransform')
-		
-		.line(v-for='line in lines'
-		track-by='$index'
-		id='line-{{ $index }}')
+	.editor() 
+		//- :style='{display: (done)? "none" : ""}'
+		.overlay(:style='{display: (!blurred || done)? "none" : "flex"}')
 			
-			span.char(v-for='char in line'
+			.message re-focus to resume typing...
+		
+		.text(:style='textTransform')
+			
+			.line(v-for='line in lines'
 			track-by='$index'
-			id='char-{{ getCharId($parent.$index, $index) }}' 
-			:class='[charClasses[getCharId($parent.$index, $index)], (char == " ")? "space" : "", (getCharId($parent.$index, $index) == current_id)? "current" : ""]')
-				| {{ (char == ' ')? "&middot;" : char }}
+			id='line-{{ $index }}')
+				
+				span.char(v-for='char in line'
+				track-by='$index'
+				id='char-{{ getCharId($parent.$index, $index) }}' 
+				:class='[charClasses[getCharId($parent.$index, $index)], (char == " ")? "space" : "", (getCharId($parent.$index, $index) == current_id)? "current" : ""]')
+					| {{ (char == ' ')? "&middot;" : char }}
 
 </template>
 
@@ -264,7 +265,7 @@ module.exports = {
 
 			this.timeTickInterval = setInterval(function() {
 				self.timeTick()
-			}, 1000)
+			}, 1001)
 		},
 
 		timeTickStop: function() {
@@ -332,7 +333,6 @@ module.exports = {
 					case 65: // a
 					case 83: // s
 						e.preventDefault()
-						console.log('shortcut ' + String.fromCharCode(c))
 					break
 				}
 			}
@@ -352,7 +352,6 @@ module.exports = {
 		
 		$(document).on('keypress.editor', function(e) {
 			var c = e.which || e.keyCode
-			console.log(c)
 			
 			if(!e.ctrlKey || e.altKey) {
 
@@ -372,7 +371,6 @@ module.exports = {
 				}
 			}
 		})
-
 	},
 
 	beforeDestroy: function() {
@@ -382,7 +380,6 @@ module.exports = {
 		$(window).off('focus.editor')
 		$(document).off('keydown.editor')
 		$(document).off('keypress.editor')
-
 	}
 }
 

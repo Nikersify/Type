@@ -1,5 +1,7 @@
 // hi
 
+// everything not scoped with var here is exposed globally to browser
+
 DEVELOPMENT = true
 
 var Vue = require('vue')
@@ -10,7 +12,7 @@ Vue.config.devtools = DEVELOPMENT
 
 $(document).ready(function() {
 
-	var playArena = require('../vue/playArena.vue')
+	var playArena = require('./components/playArena.vue')
 
 	app = new Vue({
 		el: '#app',
