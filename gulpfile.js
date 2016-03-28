@@ -2,8 +2,9 @@ var	del = require('del')
 var	sass = require('gulp-sass')
 var browserify = require('browserify')
 var gulp = require('gulp')
-var transform = require('vinyl-transform')
+var source = require('vinyl-source-stream')
 var through2 = require('through2')
+var transform = require('vinyl-transform')
 var vueify = require('vueify')
 
 gulp.task('sass', ['sass:clean'], function() {
@@ -16,6 +17,18 @@ gulp.task('sass:clean', function() {
 	return del('./public/sass')
 })
 
+gulp.task('bundle', ['bundle:clean'], function() {
+	return browserify('./source/js/entry.js', {
+			debug: true,
+			noParse: ['jquery']
+		})
+		.transform(vueify)
+		.bundle()
+		.pipe(source('bundle.js'))
+		.pipe(gulp.dest('./public/js/'))
+})
+
+/*
 gulp.task('bundle', ['bundle:clean'], function() {
 	return gulp.src('./source/js/entry.js')
 		.pipe(through2.obj(function (file, end, next) {
@@ -30,9 +43,11 @@ gulp.task('bundle', ['bundle:clean'], function() {
 		.pipe(require('gulp-rename')('bundle.js'))
 		.pipe(gulp.dest('./public/js/'))
 })
+*/
 
 gulp.task('bundle:clean', function() {
-	return del('./public/js')
+	// the only glob that doesn't cause EPERM and I have no clue why
+	return del('public/js/**.*.*')
 })
 
 gulp.task('watch', function(){

@@ -1,4 +1,4 @@
 {
 	"verbose": false,
-	"ignore": ["public/", "nodemon.json"]
+	"ignore": ["public/*", "nodemon.json", "gulpfile.js"]
 }
